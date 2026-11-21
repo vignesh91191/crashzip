@@ -44,7 +44,8 @@ Options for `c`: `--codec zstd|xz|brotli`, `-l LEVEL`, `--chunk-mb N`, `-j WORKE
 
 ## Application structure
 
-`crashzip.core` implements the archive format and compression algorithms.
+`crashzip.compression.engine` implements the archive format and compression
+algorithms. `crashzip.core` preserves the previous import path for callers.
 `crashzip.service.CrashZipService` coordinates compression, decompression, and
 verification workflows. The desktop controller handles interactions and
 operation flow, while `crashzip.gui_view` owns the Tkinter widgets and display.

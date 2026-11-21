@@ -19,4 +19,4 @@ crashzip = "crashzip.cli:main"
 crashzip-app = "crashzip.gui:main"
 
 [tool.setuptools]
-packages = ["crashzip"]
+packages = ["crashzip", "crashzip.compression"]
