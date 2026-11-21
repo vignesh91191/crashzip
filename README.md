@@ -46,7 +46,9 @@ Options for `c`: `--codec zstd|xz|brotli`, `-l LEVEL`, `--chunk-mb N`, `-j WORKE
 
 `crashzip.core` implements the archive format and compression algorithms.
 `crashzip.service.CrashZipService` coordinates compression, decompression, and
-verification workflows; the CLI handles argument parsing and terminal output.
+verification workflows. The desktop controller handles interactions and
+operation flow, while `crashzip.gui_view` owns the Tkinter widgets and display.
+The CLI handles argument parsing and terminal output.
 The service is also available to Python callers:
 
     from crashzip import CrashZipService
