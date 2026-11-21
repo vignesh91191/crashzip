@@ -42,7 +42,7 @@ class CrashZipWindow:
         self.operation_box = ttk.Combobox(
             frame,
             textvariable=self.operation,
-            values=("Compress", "Decompress", "Archive info"),
+            values=("Compress", "Unzip", "Archive info"),
             state="readonly",
         )
         self.operation_box.grid(row=1, column=1, columnspan=2, sticky="ew", pady=5)
@@ -106,24 +106,27 @@ class CrashZipWindow:
             row=6, column=0, columnspan=3, sticky="w", pady=(4, 10)
         )
 
-        self.run_button = ttk.Button(frame, text="Run", command=self._run)
+        self.run_button = ttk.Button(frame, text="Compress", command=self._run)
         self.run_button.grid(row=7, column=2, sticky="e")
         self._poll_events()
 
     def _operation_changed(self, _event=None) -> None:
         operation = self.operation.get()
         if operation == "Compress":
+            self.run_button.configure(text="Compress")
             self.options.grid()
             self.output_entry.state(["!disabled"])
             self.output_button.state(["!disabled"])
             if self.input_path.get():
                 self.output_path.set(self.input_path.get() + ".czip")
-        elif operation == "Decompress":
+        elif operation == "Unzip":
+            self.run_button.configure(text="Unzip")
             self.options.grid_remove()
             self.output_entry.state(["!disabled"])
             self.output_button.state(["!disabled"])
             self._set_default_decompression_output()
         else:
+            self.run_button.configure(text="Show info")
             self.options.grid_remove()
             self.output_path.set("")
             self.output_entry.state(["disabled"])
@@ -142,16 +145,22 @@ class CrashZipWindow:
     def _browse_input(self) -> None:
         if self.operation.get() == "Compress":
             filetypes = (("All files", "*.*"),)
+            title = "Choose file to compress"
         else:
             filetypes = (("CrashZip archives", "*.czip"), ("All files", "*.*"))
+            title = (
+                "Choose CrashZip archive to unzip"
+                if self.operation.get() == "Unzip"
+                else "Choose CrashZip archive"
+            )
         path = filedialog.askopenfilename(
-            title="Choose input file", filetypes=filetypes
+            title=title, filetypes=filetypes
         )
         if path:
             self.input_path.set(path)
             if self.operation.get() == "Compress":
                 self.output_path.set(path + ".czip")
-            elif self.operation.get() == "Decompress":
+            elif self.operation.get() == "Unzip":
                 self._set_default_decompression_output()
 
     def _set_default_decompression_output(self) -> None:
@@ -174,7 +183,11 @@ class CrashZipWindow:
         filename = os.path.basename(current) if current else ""
         initial_dir = os.path.dirname(current) if current else os.path.dirname(source)
         path = filedialog.asksaveasfilename(
-            title="Choose output file",
+            title=(
+                "Choose restored file"
+                if self.operation.get() == "Unzip"
+                else "Choose output file"
+            ),
             initialdir=initial_dir or os.getcwd(),
             initialfile=filename,
             defaultextension=".czip" if self.operation.get() == "Compress" else "",
@@ -230,7 +243,7 @@ class CrashZipWindow:
                 verify=verify,
                 progress=self._report_progress,
             )
-        elif operation == "Decompress":
+        elif operation == "Unzip":
             action = lambda: self.service.decompress(
                 source, destination, progress=self._report_progress
             )
@@ -297,7 +310,7 @@ class CrashZipWindow:
         elif isinstance(result, DecompressionResult):
             self.status.set(f"Restored to {result.output_path}")
             messagebox.showinfo(
-                "Decompression complete",
+                "Unzip complete",
                 f"Output: {result.output_path}\nSHA-256 verified.",
             )
         else:

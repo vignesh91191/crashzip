@@ -16,16 +16,17 @@ output file is left behind).
 
 Without installing, run from this folder with `python -m crashzip ...`.
 
-    ## Desktop app
+## Desktop app
 
-    Install the package, then launch the cross-platform desktop interface:
+Install the package, then launch the cross-platform desktop interface:
 
-        pip install .
-        crashzip-app
+    pip install .
+    crashzip-app
 
-    You can also run it from the source folder with `python -m crashzip.gui`.
-    The interface uses Tkinter; some Linux distributions require installing their
-    system Tk package (for example, `python3-tk`) separately.
+You can also run it from the source folder with `python -m crashzip.gui`.
+The interface uses Tkinter; some Linux distributions require installing their
+system Tk package (for example, `python3-tk`) separately.
+It supports compression, unzipping/restoring `.czip` archives, and archive info.
 
 ## Use
 
