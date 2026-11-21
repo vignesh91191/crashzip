@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crashzip"
+version = "0.1.0"
+description = "Lossless compressor for crash-simulation result files (FEMZip-style) using open-source codecs"
+requires-python = ">=3.9"
+dependencies = ["numpy", "zstandard"]
+
+[project.optional-dependencies]
+brotli = ["brotli"]
+
+[project.scripts]
+crashzip = "crashzip.cli:main"
+
+[tool.setuptools]
+packages = ["crashzip"]
