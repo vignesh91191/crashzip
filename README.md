@@ -1,6 +1,6 @@
 # crashzip
 
-A FEMZip-style compressor for crash-simulation result files (LS-DYNA d3plot, Radioss,
+A compressor for crash-simulation result files (LS-DYNA d3plot, Radioss,
 PAM-CRASH, or any binary dominated by float32 arrays), built only on open-source parts:
 **zstd**, **LZMA/xz** and **brotli**, plus NumPy for the float-aware transforms.
 
