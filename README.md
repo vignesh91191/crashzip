@@ -71,7 +71,7 @@ plain xz 1.73x, crashzip 1.46x (auto) and 1.76x (with stride), all bit-exact.
 ## Limits and next steps
 
 * Lossless ratios on real float32 solver output are modest (often 1.5x to 3x) because
-  the low mantissa bits are close to noise. FMZip's large ratios come from **lossy
-  quantization with a user-set error bound**; that mode is not included yet.
+  the low mantissa bits are close to noise. Larger ratios can be achieved with **lossy
+  quantization and a user-set error bound**; that mode is not included yet.
 * No d3plot parser yet: geometry, connectivity and result states are treated as one
   byte stream. Splitting by field type would improve ratios further.
