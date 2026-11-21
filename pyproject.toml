@@ -15,5 +15,8 @@ brotli = ["brotli"]
 [project.scripts]
 crashzip = "crashzip.cli:main"
 
+[project.gui-scripts]
+crashzip-app = "crashzip.gui:main"
+
 [tool.setuptools]
 packages = ["crashzip"]
