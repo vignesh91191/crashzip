@@ -30,6 +30,18 @@ Without installing, run from this folder with `python -m crashzip ...`.
 Options for `c`: `--codec zstd|xz|brotli`, `-l LEVEL`, `--chunk-mb N`, `-j WORKERS`,
 `--verify` (round-trips the archive and compares hashes).
 
+## Application structure
+
+`crashzip.core` implements the archive format and compression algorithms.
+`crashzip.service.CrashZipService` coordinates compression, decompression, and
+verification workflows; the CLI handles argument parsing and terminal output.
+The service is also available to Python callers:
+
+    from crashzip import CrashZipService
+
+    result = CrashZipService().compress("model.d3plot", verify=True)
+    print(result.output_path, result.verified)
+
 ### The `--stride` option (matters a lot)
 
 Solver files store the same fields once per time state, so the best predictor of a value

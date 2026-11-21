@@ -1,0 +1,17 @@
+# Python environments and generated metadata
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Build and test caches
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Generated sample data
+/sample_crash.d3plot
+/sample_crash.d3plot.czip

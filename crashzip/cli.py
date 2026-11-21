@@ -7,6 +7,7 @@ import sys
 import time
 
 from . import core
+from .service import CrashZipService
 
 
 def _bar(label: str):
@@ -26,6 +27,7 @@ def _bar(label: str):
 
 
 def main(argv=None) -> int:
+    service = CrashZipService()
     p = argparse.ArgumentParser(prog="crashzip",
                                 description="Lossless compressor for crash-simulation result files.")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -54,31 +56,29 @@ def main(argv=None) -> int:
     try:
         if a.cmd in ("c", "compress"):
             out = a.output or a.input + ".czip"
-            r = core.compress_file(a.input, out, codec=a.codec, level=a.level, stride=a.stride,
-                                   chunk_size=a.chunk_mb * 1024 * 1024, workers=a.workers,
-                                   progress=_bar("compress"))
-            print(f"{r['original']:,} -> {r['compressed']:,} bytes  (ratio {r['ratio']:.2f}x)  -> {out}")
-            if a.verify:
-                import os, tempfile
-                tmp = tempfile.mktemp(suffix=".verify")
-                try:
-                    v = core.decompress_file(out, tmp, workers=a.workers)
-                finally:
-                    if os.path.exists(tmp):
-                        os.remove(tmp)
-                ok = v["sha256"] == r["sha256"]
-                print("verify:", "OK, bit-exact" if ok else "FAILED")
-                return 0 if ok else 2
+            r = service.compress(
+                a.input,
+                out,
+                codec=a.codec,
+                level=a.level,
+                stride=a.stride,
+                chunk_size=a.chunk_mb * 1024 * 1024,
+                workers=a.workers,
+                verify=a.verify,
+                progress=_bar("compress"),
+            )
+            print(f"{r.original_size:,} -> {r.compressed_size:,} bytes  "
+                  f"(ratio {r.ratio:.2f}x)  -> {r.output_path}")
+            if r.verified is not None:
+                print("verify:", "OK, bit-exact" if r.verified else "FAILED")
+                return 0 if r.verified else 2
         elif a.cmd in ("d", "decompress"):
-            out = a.output
-            if not out:
-                with open(a.input, "rb") as f:
-                    out = core.read_header(f)["name"] or (a.input + ".out")
-            r = core.decompress_file(a.input, out, workers=a.workers, progress=_bar("decompress"))
-            print(f"restored {r['size']:,} bytes -> {out}  (sha256 verified)")
+            r = service.decompress(
+                a.input, a.output, workers=a.workers, progress=_bar("decompress")
+            )
+            print(f"restored {r.size:,} bytes -> {r.output_path}  (sha256 verified)")
         else:
-            with open(a.input, "rb") as f:
-                h = core.read_header(f)
+            h = service.get_info(a.input)
             for k, v in h.items():
                 print(f"{k:11}: {v}")
     except core.CrashZipError as e:
